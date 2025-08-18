@@ -52,7 +52,7 @@ class ProductoFormWindow:
             value=producto_data['fecha_caducidad'] if producto_data else ""
         )
         self.costo_por_ml_field = ft.TextField(
-            label="Costo por ml ($)", 
+            label="Costo por ml (Q)", 
             width=250, 
             value=str(producto_data['costo_por_ml']) if producto_data else "0.00"
         )

@@ -194,7 +194,7 @@ class MainWindow:
             ft.Container(
                 content=ft.Column([
                     ft.Text("Valor Total", size=14, weight=ft.FontWeight.BOLD),
-                    ft.Text(f"${valor_total_inventario:.2f}", size=20, color=ft.Colors.GREEN_700)
+                    ft.Text(f"Q{valor_total_inventario:.2f}", size=20, color=ft.Colors.GREEN_700)
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                 padding=15,
                 bgcolor=ft.Colors.GREEN_100,
@@ -282,16 +282,24 @@ class MainWindow:
     
     def _eliminar_producto(self, producto_id):
         """Elimina un producto"""
+        print(f"DEBUG: Ejecutando eliminación para producto ID: {producto_id}")
+        print(f"DEBUG: Callback eliminar disponible: {self.on_eliminar_producto is not None}")
+        
         if self.on_eliminar_producto:
             try:
+                print(f"DEBUG: Llamando callback de eliminación")
                 self.on_eliminar_producto(producto_id)
                 self.alert_manager.show_success(
                     f"🗑️ Producto '{producto_id}' eliminado correctamente"
                 )
+                print(f"DEBUG: Eliminación exitosa")
             except Exception as ex:
+                print(f"DEBUG: Error en eliminación: {ex}")
                 self.alert_manager.show_error(
                     f"❌ Error al eliminar producto: {str(ex)}"
                 )
+        else:
+            print(f"DEBUG: No hay callback de eliminación configurado")
     
     def _filtrar_productos(self, e=None):
         """Filtra los productos según los criterios"""
@@ -347,8 +355,8 @@ class MainWindow:
                     ft.DataCell(ft.Text(f"{producto['stock_minimo']} ml")),
                     ft.DataCell(ft.Text(producto['proveedor'])),
                     ft.DataCell(ft.Text(producto['fecha_caducidad'])),
-                    ft.DataCell(ft.Text(f"${producto['costo_por_ml']:.2f}")),
-                    ft.DataCell(ft.Text(f"${valor_total:.2f}")),
+                    ft.DataCell(ft.Text(f"Q{producto['costo_por_ml']:.2f}")),
+                    ft.DataCell(ft.Text(f"Q{valor_total:.2f}")),
                     ft.DataCell(ft.Text(estado_texto, color=estado_color)),
                     ft.DataCell(
                         ft.Row([
@@ -374,6 +382,8 @@ class MainWindow:
     
     def _confirmar_eliminacion(self, producto_id):
         """Muestra diálogo de confirmación para eliminar"""
+        print(f"DEBUG: Iniciando confirmación de eliminación para producto ID: {producto_id}")
+        
         # Buscar el nombre del producto para mostrar en la confirmación
         producto_nombre = None
         for producto in self.productos:
@@ -381,8 +391,10 @@ class MainWindow:
                 producto_nombre = producto['nombre']
                 break
         
+        print(f"DEBUG: Producto encontrado: {producto_nombre}")
         mensaje = f"¿Estás seguro de que quieres eliminar el producto '{producto_nombre or producto_id}'?"
         
+        print(f"DEBUG: Mostrando diálogo de confirmación")
         self.alert_manager.show_confirmation_dialog(
             titulo="Confirmar Eliminación",
             mensaje=mensaje,
