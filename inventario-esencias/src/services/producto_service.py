@@ -11,7 +11,7 @@ class ProductoService:
         create_tables()
     
     def agregar_producto(self, id_producto: str, nombre: str, stock_actual: float, 
-                        stock_minimo: float, proveedor: str, fecha_caducidad: str, 
+                        costo_entrada: float, proveedor: str, fecha_caducidad: str, 
                         costo_por_ml: float) -> bool:
         """
         Agrega un nuevo producto a la base de datos
@@ -20,7 +20,7 @@ class ProductoService:
             id_producto: ID único del producto
             nombre: Nombre de la esencia
             stock_actual: Stock actual en ml
-            stock_minimo: Stock mínimo en ml
+            costo_entrada: Costo total de entrada del producto
             proveedor: Nombre del proveedor
             fecha_caducidad: Fecha en formato YYYY-MM-DD
             costo_por_ml: Costo por mililitro
@@ -41,7 +41,7 @@ class ProductoService:
                 id=id_producto,
                 nombre=nombre,
                 stock_actual=int(stock_actual),
-                stock_minimo=int(stock_minimo),
+                costo_entrada=float(costo_entrada),
                 proveedor=proveedor,
                 fecha_caducidad=fecha_obj,
                 costo_por_ml=float(costo_por_ml)
@@ -75,7 +75,7 @@ class ProductoService:
                     'id_producto': producto.id,
                     'nombre': producto.nombre,
                     'stock_actual': producto.stock_actual,
-                    'stock_minimo': producto.stock_minimo,
+                    'costo_entrada': producto.costo_entrada,
                     'proveedor': producto.proveedor,
                     'fecha_caducidad': producto.fecha_caducidad.strftime('%Y-%m-%d'),
                     'costo_por_ml': producto.costo_por_ml,
@@ -110,7 +110,7 @@ class ProductoService:
                     'id_producto': producto.id,
                     'nombre': producto.nombre,
                     'stock_actual': producto.stock_actual,
-                    'stock_minimo': producto.stock_minimo,
+                    'costo_entrada': producto.costo_entrada,
                     'proveedor': producto.proveedor,
                     'fecha_caducidad': producto.fecha_caducidad.strftime('%Y-%m-%d'),
                     'costo_por_ml': producto.costo_por_ml,
@@ -126,7 +126,7 @@ class ProductoService:
             session.close()
     
     def actualizar_producto(self, id_producto: str, nombre: str, stock_actual: float,
-                           stock_minimo: float, proveedor: str, fecha_caducidad: str,
+                           costo_entrada: float, proveedor: str, fecha_caducidad: str,
                            costo_por_ml: float) -> bool:
         """
         Actualiza un producto existente
@@ -135,7 +135,7 @@ class ProductoService:
             id_producto: ID del producto a actualizar
             nombre: Nuevo nombre
             stock_actual: Nuevo stock actual
-            stock_minimo: Nuevo stock mínimo
+            costo_entrada: Nuevo costo de entrada
             proveedor: Nuevo proveedor
             fecha_caducidad: Nueva fecha de caducidad
             costo_por_ml: Nuevo costo por ml
@@ -156,7 +156,7 @@ class ProductoService:
             # Actualizar campos
             producto.nombre = nombre
             producto.stock_actual = int(stock_actual)
-            producto.stock_minimo = int(stock_minimo)
+            producto.costo_entrada = float(costo_entrada)
             producto.proveedor = proveedor
             producto.fecha_caducidad = fecha_obj
             producto.costo_por_ml = float(costo_por_ml)
@@ -223,7 +223,7 @@ class ProductoService:
                     'id_producto': producto.id,
                     'nombre': producto.nombre,
                     'stock_actual': producto.stock_actual,
-                    'stock_minimo': producto.stock_minimo,
+                    'costo_entrada': producto.costo_entrada,
                     'proveedor': producto.proveedor,
                     'fecha_caducidad': producto.fecha_caducidad.strftime('%Y-%m-%d'),
                     'costo_por_ml': producto.costo_por_ml,
@@ -275,7 +275,7 @@ class ProductoService:
                 'id_producto': 'ESE001',
                 'nombre': 'Lavanda Premium',
                 'stock_actual': 500,
-                'stock_minimo': 100,
+                'costo_entrada': 125.00,
                 'proveedor': 'Aromática Natural',
                 'fecha_caducidad': '2025-12-31',
                 'costo_por_ml': 0.25
@@ -284,7 +284,7 @@ class ProductoService:
                 'id_producto': 'ESE002',
                 'nombre': 'Rosa Búlgara',
                 'stock_actual': 50,
-                'stock_minimo': 100,
+                'costo_entrada': 40.00,
                 'proveedor': 'Esencias del Mundo',
                 'fecha_caducidad': '2025-06-15',
                 'costo_por_ml': 0.80
@@ -293,7 +293,7 @@ class ProductoService:
                 'id_producto': 'ESE003',
                 'nombre': 'Eucalipto',
                 'stock_actual': 300,
-                'stock_minimo': 150,
+                'costo_entrada': 45.00,
                 'proveedor': 'Aromática Natural',
                 'fecha_caducidad': '2026-03-20',
                 'costo_por_ml': 0.15
@@ -302,10 +302,19 @@ class ProductoService:
                 'id_producto': 'ESE004',
                 'nombre': 'Ylang Ylang',
                 'stock_actual': 80,
-                'stock_minimo': 100,
+                'costo_entrada': 76.00,
                 'proveedor': 'Tropical Scents',
                 'fecha_caducidad': '2025-09-10',
                 'costo_por_ml': 0.95
+            },
+            {
+                'id_producto': 'ESE101',
+                'nombre': 'Es Davo',
+                'stock_actual': 250,
+                'costo_entrada': 2500.00,
+                'proveedor': 'Luisito',
+                'fecha_caducidad': '2025-09-21',
+                'costo_por_ml': 10.00
             }
         ]
         

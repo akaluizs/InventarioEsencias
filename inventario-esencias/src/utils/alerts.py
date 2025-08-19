@@ -13,6 +13,7 @@ class AlertManager:
             content=ft.Column([]),
             padding=10,
             width=400,
+            height=100,
             bgcolor=ft.Colors.TRANSPARENT,
         )
         
@@ -84,49 +85,49 @@ class AlertManager:
                     # Contenido principal
                     ft.Container(
                         content=ft.Column([
-                            ft.Icon(icon, color=ft.Colors.WHITE, size=24),
+                            ft.Icon(icon, color=ft.Colors.WHITE, size=32),
                             ft.Text(
                                 mensaje, 
                                 color=ft.Colors.WHITE, 
                                 weight=ft.FontWeight.BOLD, 
-                                size=12,
+                                size=14,
                                 text_align=ft.TextAlign.CENTER,
-                                max_lines=3,
+                                max_lines=4,
                                 overflow=ft.TextOverflow.ELLIPSIS
                             )
                         ], 
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        spacing=8
+                        spacing=10
                         ),
-                        padding=ft.padding.only(top=20, bottom=15, left=15, right=15)
+                        padding=ft.padding.only(top=25, bottom=20, left=20, right=20)
                     ),
                     # Botón X en la esquina superior derecha
                     ft.Container(
                         content=ft.IconButton(
                             icon=ft.Icons.CLOSE,
-                            icon_size=16,
+                            icon_size=18,
                             icon_color=ft.Colors.WHITE,
                             on_click=close_alert,
                             tooltip="Cerrar"
                         ),
                         alignment=ft.alignment.top_right,
-                        padding=ft.padding.only(top=2, right=2)
+                        padding=ft.padding.only(top=3, right=3)
                     )
                 ]),
                 padding=0,
                 bgcolor=color,
-                border_radius=12,
-                margin=ft.margin.only(bottom=10),
+                border_radius=15,
+                margin=ft.margin.only(bottom=12),
                 animate_opacity=300,
                 opacity=1.0,
-                width=150,
-                height=100,
+                width=220,
+                height=140,
                 shadow=ft.BoxShadow(
-                    spread_radius=1,
-                    blur_radius=10,
+                    spread_radius=2,
+                    blur_radius=15,
                     color=ft.Colors.BLACK26,
-                    offset=ft.Offset(0, 4),
+                    offset=ft.Offset(0, 6),
                 )
             )
             
@@ -196,17 +197,17 @@ class AlertManager:
                     ft.Text(titulo, weight=ft.FontWeight.BOLD, size=18, color=ft.Colors.ORANGE_600)
                 ], alignment=ft.MainAxisAlignment.CENTER),
                 
-                ft.Divider(height=20),
+                ft.Divider(height=20, color=ft.Colors.GREY_600),
                 
                 # Mensaje
                 ft.Text(
                     mensaje, 
                     size=14, 
                     text_align=ft.TextAlign.CENTER,
-                    color=ft.Colors.BLACK87
+                    color=ft.Colors.WHITE
                 ),
                 
-                ft.Divider(height=20),
+                ft.Divider(height=20, color=ft.Colors.GREY_600),
                 
                 # Botones
                 ft.Row([
@@ -214,7 +215,7 @@ class AlertManager:
                         "Cancelar",
                         on_click=cancelar,
                         style=ft.ButtonStyle(
-                            bgcolor=ft.Colors.GREY_400,
+                            bgcolor=ft.Colors.GREY_600,
                             color=ft.Colors.WHITE
                         ),
                         width=120
@@ -234,7 +235,7 @@ class AlertManager:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
             ),
             padding=30,
-            bgcolor=ft.Colors.WHITE,
+            bgcolor=ft.Colors.GREY_800,  # Fondo oscuro
             border_radius=15,
             width=400,
             shadow=ft.BoxShadow(

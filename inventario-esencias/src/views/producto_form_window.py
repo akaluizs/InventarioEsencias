@@ -2,6 +2,36 @@ import flet as ft
 from typing import Optional, Callable, Dict, Any
 from utils.alerts import AlertManager
 
+class DarkTheme:
+    """Colores para el tema oscuro moderno"""
+    # Fondos
+    PRIMARY_BG = ft.Colors.GREY_900
+    SECONDARY_BG = ft.Colors.GREY_800
+    CARD_BG = ft.Colors.GREY_700
+    SURFACE_BG = ft.Colors.GREY_600
+    HOVER_BG = ft.Colors.GREY_600
+    
+    # Textos
+    PRIMARY_TEXT = ft.Colors.WHITE
+    SECONDARY_TEXT = ft.Colors.GREY_300
+    ACCENT_TEXT = ft.Colors.BLUE_300
+    
+    # Acentos modernos
+    SUCCESS = ft.Colors.GREEN_400
+    ERROR = ft.Colors.RED_400
+    WARNING = ft.Colors.ORANGE_400
+    INFO = ft.Colors.BLUE_400
+    
+    # Botones modernos
+    BUTTON_PRIMARY = ft.Colors.BLUE_600
+    BUTTON_SUCCESS = ft.Colors.GREEN_600
+    BUTTON_DANGER = ft.Colors.RED_600
+    BUTTON_SECONDARY = ft.Colors.GREY_600
+    
+    # Bordes y divisores
+    BORDER_COLOR = ft.Colors.GREY_600
+    DIVIDER_COLOR = ft.Colors.GREY_500
+
 class ProductoFormWindow:
     def __init__(self, page: ft.Page, producto_data: Optional[Dict[str, Any]] = None):
         self.page = page
@@ -35,10 +65,10 @@ class ProductoFormWindow:
             width=250, 
             value=str(producto_data['stock_actual']) if producto_data else "0"
         )
-        self.stock_minimo_field = ft.TextField(
-            label="Stock Mínimo (ml)", 
+        self.costo_entrada_field = ft.TextField(
+            label="Costo de Entrada (Q)", 
             width=250, 
-            value=str(producto_data['stock_minimo']) if producto_data else "100"
+            value=str(producto_data['costo_entrada']) if producto_data else "0.00"
         )
         self.proveedor_field = ft.TextField(
             label="Proveedor", 
@@ -67,19 +97,19 @@ class ProductoFormWindow:
         # Encabezado
         header = ft.Container(
             content=ft.Row([
-                ft.Icon(title_icon, color=ft.Colors.BLUE_700, size=30),
-                ft.Text(title_text, size=28, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700),
+                ft.Icon(title_icon, color=DarkTheme.INFO, size=30),
+                ft.Text(title_text, size=28, weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT),
                 ft.Container(expand=True),  # Spacer
                 ft.IconButton(
                     ft.Icons.CLOSE,
                     tooltip="Cerrar",
                     on_click=self._on_cancel,
                     icon_size=30,
-                    icon_color=ft.Colors.RED_400
+                    icon_color=DarkTheme.ERROR
                 )
             ]),
             padding=20,
-            bgcolor=ft.Colors.BLUE_50,
+            bgcolor=DarkTheme.CARD_BG,
             border_radius=ft.border_radius.only(top_left=10, top_right=10)
         )
         
@@ -90,60 +120,75 @@ class ProductoFormWindow:
                 ft.Container(
                     content=ft.Column([
                         ft.Row([
-                            ft.Icon(ft.Icons.INFO, color=ft.Colors.PURPLE_700),
-                            ft.Text("Información Básica", size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.PURPLE_700)
+                            ft.Icon(ft.Icons.INFO, color=DarkTheme.INFO),
+                            ft.Text("Información Básica", size=18, weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT)
                         ]),
-                        ft.Divider(color=ft.Colors.PURPLE_300),
+                        ft.Divider(color=DarkTheme.SECONDARY_TEXT),
                         ft.Row([
                             self.id_field,
                             self.nombre_field,
                         ], wrap=True, spacing=15),
                     ], spacing=10),
                     padding=20,
-                    border=ft.border.all(2, ft.Colors.PURPLE_200),
+                    border=ft.border.all(2, DarkTheme.SECONDARY_TEXT),
                     border_radius=10,
-                    bgcolor=ft.Colors.PURPLE_50
+                    bgcolor=DarkTheme.CARD_BG
                 ),
                 
                 # Control de Stock
                 ft.Container(
                     content=ft.Column([
                         ft.Row([
-                            ft.Icon(ft.Icons.INVENTORY, color=ft.Colors.BLUE_700),
-                            ft.Text("Control de Stock", size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_700)
+                            ft.Icon(ft.Icons.INVENTORY, color=DarkTheme.SUCCESS),
+                            ft.Text("Control de Stock", size=18, weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT)
                         ]),
-                        ft.Divider(color=ft.Colors.BLUE_300),
+                        ft.Divider(color=DarkTheme.SECONDARY_TEXT),
                         ft.Row([
                             self.stock_actual_field,
-                            self.stock_minimo_field,
                         ], wrap=True, spacing=15),
                     ], spacing=10),
                     padding=20,
-                    border=ft.border.all(2, ft.Colors.BLUE_200),
+                    border=ft.border.all(2, DarkTheme.SECONDARY_TEXT),
                     border_radius=10,
-                    bgcolor=ft.Colors.BLUE_50
+                    bgcolor=DarkTheme.CARD_BG
+                ),
+                
+                # Información Financiera
+                ft.Container(
+                    content=ft.Column([
+                        ft.Row([
+                            ft.Icon(ft.Icons.ATTACH_MONEY, color=DarkTheme.WARNING),
+                            ft.Text("Información Financiera", size=18, weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT)
+                        ]),
+                        ft.Divider(color=DarkTheme.SECONDARY_TEXT),
+                        ft.Row([
+                            self.costo_entrada_field,
+                            self.costo_por_ml_field,
+                        ], wrap=True, spacing=15),
+                    ], spacing=10),
+                    padding=20,
+                    border=ft.border.all(2, DarkTheme.SECONDARY_TEXT),
+                    border_radius=10,
+                    bgcolor=DarkTheme.CARD_BG
                 ),
                 
                 # Información adicional
                 ft.Container(
                     content=ft.Column([
                         ft.Row([
-                            ft.Icon(ft.Icons.BUSINESS, color=ft.Colors.GREEN_700),
-                            ft.Text("Información Adicional", size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.GREEN_700)
+                            ft.Icon(ft.Icons.BUSINESS, color=DarkTheme.WARNING),
+                            ft.Text("Información Adicional", size=18, weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT)
                         ]),
-                        ft.Divider(color=ft.Colors.GREEN_300),
+                        ft.Divider(color=DarkTheme.SECONDARY_TEXT),
                         ft.Row([
                             self.proveedor_field,
                             self.fecha_caducidad_field,
                         ], wrap=True, spacing=15),
-                        ft.Row([
-                            self.costo_por_ml_field,
-                        ], spacing=15),
                     ], spacing=10),
                     padding=20,
-                    border=ft.border.all(2, ft.Colors.GREEN_200),
+                    border=ft.border.all(2, DarkTheme.SECONDARY_TEXT),
                     border_radius=10,
-                    bgcolor=ft.Colors.GREEN_50
+                    bgcolor=DarkTheme.CARD_BG
                 ),
             ], spacing=20, scroll=ft.ScrollMode.AUTO),
             padding=20,
@@ -158,8 +203,8 @@ class ProductoFormWindow:
                     icon=ft.Icons.CANCEL,
                     on_click=self._on_cancel,
                     style=ft.ButtonStyle(
-                        bgcolor=ft.Colors.GREY_400,
-                        color=ft.Colors.WHITE
+                        bgcolor=DarkTheme.SECONDARY_BG,
+                        color=DarkTheme.PRIMARY_TEXT
                     ),
                     width=150,
                     height=50
@@ -170,15 +215,15 @@ class ProductoFormWindow:
                     icon=ft.Icons.SAVE if not self.is_editing else ft.Icons.UPDATE,
                     on_click=self._on_save,
                     style=ft.ButtonStyle(
-                        bgcolor=ft.Colors.GREEN_400 if not self.is_editing else ft.Colors.BLUE_400,
-                        color=ft.Colors.WHITE
+                        bgcolor=DarkTheme.SUCCESS if not self.is_editing else DarkTheme.INFO,
+                        color=DarkTheme.PRIMARY_TEXT
                     ),
                     width=150,
                     height=50
                 ),
             ]),
             padding=20,
-            bgcolor=ft.Colors.GREY_100,
+            bgcolor=DarkTheme.CARD_BG,
             border_radius=ft.border_radius.only(bottom_left=10, bottom_right=10)
         )
         
@@ -189,9 +234,9 @@ class ProductoFormWindow:
                 form_content,
                 action_buttons,
             ], spacing=0),
-            border=ft.border.all(2, ft.Colors.GREY_400),
+            border=ft.border.all(2, DarkTheme.SECONDARY_BG),
             border_radius=10,
-            bgcolor=ft.Colors.WHITE,
+            bgcolor=DarkTheme.CARD_BG,
             margin=20
         )
     
@@ -205,7 +250,7 @@ class ProductoFormWindow:
                 'id_producto': self.id_field.value,
                 'nombre': self.nombre_field.value,
                 'stock_actual': float(self.stock_actual_field.value),
-                'stock_minimo': float(self.stock_minimo_field.value),
+                'costo_entrada': float(self.costo_entrada_field.value),
                 'proveedor': self.proveedor_field.value,
                 'fecha_caducidad': self.fecha_caducidad_field.value,
                 'costo_por_ml': float(self.costo_por_ml_field.value)
@@ -241,15 +286,15 @@ class ProductoFormWindow:
         
         try:
             stock_actual = float(self.stock_actual_field.value)
-            stock_minimo = float(self.stock_minimo_field.value)
+            costo_entrada = float(self.costo_entrada_field.value)
             costo_ml = float(self.costo_por_ml_field.value)
             
             if stock_actual < 0:
                 self._mostrar_error("El stock actual no puede ser negativo")
                 return False
             
-            if stock_minimo < 0:
-                self._mostrar_error("El stock mínimo no puede ser negativo")
+            if costo_entrada < 0:
+                self._mostrar_error("El costo de entrada no puede ser negativo")
                 return False
             
             if costo_ml < 0:
