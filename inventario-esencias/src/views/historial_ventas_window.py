@@ -195,14 +195,16 @@ class HistorialVentasWindow:
         """Crea la tabla del historial"""
         # Encabezados de la tabla con mejor distribución
         headers = ft.Row([
-            ft.Container(ft.Text("Fecha", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=160, alignment=ft.alignment.center),
-            ft.Container(ft.Text("ID Venta", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
-            ft.Container(ft.Text("Producto", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=250, alignment=ft.alignment.center),
-            ft.Container(ft.Text("Cantidad", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
-            ft.Container(ft.Text("Precio", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=130, alignment=ft.alignment.center),
-            ft.Container(ft.Text("Ganancia", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=130, alignment=ft.alignment.center),
-            ft.Container(ft.Text("Cliente", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=14, text_align=ft.TextAlign.CENTER), width=200, alignment=ft.alignment.center),
-        ], spacing=15)
+            ft.Container(ft.Text("Fecha", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=110, alignment=ft.alignment.center),
+            ft.Container(ft.Text("ID", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=80, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Producto", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=160, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Frasco", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=130, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Cant.(ml)", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=80, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Costo Prod.", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=100, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Precio Venta", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Ganancia", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=100, alignment=ft.alignment.center),
+            ft.Container(ft.Text("Cliente", weight=ft.FontWeight.BOLD, color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
+        ], spacing=12)
         
         self.tabla_filas = ft.Column([], spacing=8, scroll=ft.ScrollMode.AUTO)
         
@@ -292,17 +294,24 @@ class HistorialVentasWindow:
         for i, venta in enumerate(self.historial_ventas):
             fila_color = DarkTheme.TABLE_ROW_EVEN if i % 2 == 0 else DarkTheme.TABLE_ROW_ODD
             
+            # Obtener datos de la venta
+            costo_produccion = venta.get('costo_produccion', 0)
+            precio_venta = venta.get('precio_venta', 0)
+            ganancia = venta.get('ganancia', 0)
+            
             fila = ft.Container(
                 content=ft.Row([
-                    ft.Container(ft.Text(venta['fecha'], color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=160, alignment=ft.alignment.center),
-                    ft.Container(ft.Text(venta['id'], color=DarkTheme.ACCENT_TEXT, size=13, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
-                    ft.Container(ft.Text(venta['producto_nombre'], color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=250, alignment=ft.alignment.center),
-                    ft.Container(ft.Text(f"{venta['cantidad_vendida']:.1f} ml", color=DarkTheme.PRIMARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
-                    ft.Container(ft.Text(f"Q{venta['precio_venta']:.2f}", color=DarkTheme.SUCCESS, size=13, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), width=130, alignment=ft.alignment.center),
-                    ft.Container(ft.Text(f"Q{venta['ganancia']:.2f}", color=DarkTheme.WARNING, size=13, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), width=130, alignment=ft.alignment.center),
-                    ft.Container(ft.Text(venta['cliente'], color=DarkTheme.SECONDARY_TEXT, size=13, text_align=ft.TextAlign.CENTER), width=200, alignment=ft.alignment.center),
-                ], spacing=15),
-                padding=ft.Padding(25, 15, 25, 15),
+                    ft.Container(ft.Text(venta['fecha'], color=DarkTheme.PRIMARY_TEXT, size=12, text_align=ft.TextAlign.CENTER), width=110, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(venta['id'], color=DarkTheme.ACCENT_TEXT, size=12, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.CENTER), width=80, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(venta['producto_nombre'], color=DarkTheme.PRIMARY_TEXT, size=11, text_align=ft.TextAlign.CENTER), width=160, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(venta.get('frasco_nombre', 'Sin frasco'), color=DarkTheme.SECONDARY_TEXT, size=11, text_align=ft.TextAlign.CENTER), width=130, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(f"{venta['cantidad_vendida']:.1f}", color=DarkTheme.PRIMARY_TEXT, size=12, text_align=ft.TextAlign.CENTER), width=80, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(f"Q{costo_produccion:.2f}", color=DarkTheme.ERROR, size=12, text_align=ft.TextAlign.CENTER), width=100, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(f"Q{precio_venta:.2f}", color=ft.Colors.GREEN_300, size=12, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(f"Q{ganancia:.2f}", color=DarkTheme.WARNING, size=12, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER), width=100, alignment=ft.alignment.center),
+                    ft.Container(ft.Text(venta['cliente'], color=DarkTheme.SECONDARY_TEXT, size=11, text_align=ft.TextAlign.CENTER), width=120, alignment=ft.alignment.center),
+                ], spacing=12),
+                padding=ft.Padding(20, 12, 20, 12),
                 bgcolor=fila_color,
                 border_radius=8,
                 margin=ft.margin.only(bottom=4),
@@ -370,13 +379,14 @@ class HistorialVentasWindow:
             
             fila = ft.Container(
                 content=ft.Row([
-                    ft.Container(ft.Text(venta['fecha'], color=DarkTheme.PRIMARY_TEXT, size=13), width=160),
-                    ft.Container(ft.Text(venta['id'], color=DarkTheme.ACCENT_TEXT, size=13, weight=ft.FontWeight.W_500), width=120),
-                    ft.Container(ft.Text(venta['producto_nombre'], color=DarkTheme.PRIMARY_TEXT, size=13), width=250),
-                    ft.Container(ft.Text(f"{venta['cantidad_vendida']:.1f} ml", color=DarkTheme.PRIMARY_TEXT, size=13), width=120),
-                    ft.Container(ft.Text(f"Q{venta['precio_venta']:.2f}", color=DarkTheme.SUCCESS, size=13, weight=ft.FontWeight.BOLD), width=130),
-                    ft.Container(ft.Text(f"Q{venta['ganancia']:.2f}", color=DarkTheme.WARNING, size=13, weight=ft.FontWeight.BOLD), width=130),
-                    ft.Container(ft.Text(venta['cliente'], color=DarkTheme.SECONDARY_TEXT, size=13), width=200),
+                    ft.Container(ft.Text(venta['fecha'], color=DarkTheme.PRIMARY_TEXT, size=13), width=130),
+                    ft.Container(ft.Text(venta['id'], color=DarkTheme.ACCENT_TEXT, size=13, weight=ft.FontWeight.W_500), width=90),
+                    ft.Container(ft.Text(venta['producto_nombre'], color=DarkTheme.PRIMARY_TEXT, size=13), width=180),
+                    ft.Container(ft.Text(venta.get('frasco_nombre', 'Sin frasco'), color=DarkTheme.SECONDARY_TEXT, size=13), width=140),
+                    ft.Container(ft.Text(f"{venta['cantidad_vendida']:.1f} ml", color=DarkTheme.PRIMARY_TEXT, size=13), width=90),
+                    ft.Container(ft.Text(f"Q{venta['precio_venta']:.2f}", color=DarkTheme.SUCCESS, size=13, weight=ft.FontWeight.BOLD), width=100),
+                    ft.Container(ft.Text(f"Q{venta['ganancia']:.2f}", color=DarkTheme.WARNING, size=13, weight=ft.FontWeight.BOLD), width=100),
+                    ft.Container(ft.Text(venta['cliente'], color=DarkTheme.SECONDARY_TEXT, size=13), width=130),
                 ], spacing=15),
                 padding=ft.Padding(25, 15, 25, 15),
                 bgcolor=fila_color,

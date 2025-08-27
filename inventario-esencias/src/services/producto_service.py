@@ -12,7 +12,7 @@ class ProductoService:
     
     def agregar_producto(self, id_producto: str, nombre: str, stock_actual: float, 
                         costo_entrada: float, proveedor: str, fecha_caducidad: str, 
-                        costo_por_ml: float) -> bool:
+                        costo_por_ml: float, genero: str = "Unisex") -> bool:
         """
         Agrega un nuevo producto a la base de datos
         
@@ -24,6 +24,7 @@ class ProductoService:
             proveedor: Nombre del proveedor
             fecha_caducidad: Fecha en formato YYYY-MM-DD
             costo_por_ml: Costo por mililitro
+            genero: Género de la esencia (Masculino, Femenino, Unisex)
             
         Returns:
             bool: True si se agregó exitosamente, False en caso contrario
@@ -35,6 +36,14 @@ class ProductoService:
                 raise ValueError(f"Ya existe un producto con ID: {id_producto}")
             
             # Convertir fecha string a date object
+            if isinstance(fecha_caducidad, (int, float)):
+                # Si viene como número, convertirlo a string primero
+                fecha_caducidad = str(fecha_caducidad)
+            
+            # Validar formato de fecha
+            if not isinstance(fecha_caducidad, str):
+                raise ValueError(f"Fecha de caducidad debe ser string, recibido: {type(fecha_caducidad)}")
+                
             fecha_obj = datetime.strptime(fecha_caducidad, '%Y-%m-%d').date()
             
             nuevo_producto = Producto(
@@ -44,7 +53,8 @@ class ProductoService:
                 costo_entrada=float(costo_entrada),
                 proveedor=proveedor,
                 fecha_caducidad=fecha_obj,
-                costo_por_ml=float(costo_por_ml)
+                costo_por_ml=float(costo_por_ml),
+                genero=genero
             )
             
             session.add(nuevo_producto)
@@ -74,6 +84,7 @@ class ProductoService:
                 resultado.append({
                     'id_producto': producto.id,
                     'nombre': producto.nombre,
+                    'genero': producto.genero,
                     'stock_actual': producto.stock_actual,
                     'costo_entrada': producto.costo_entrada,
                     'proveedor': producto.proveedor,
@@ -109,6 +120,7 @@ class ProductoService:
                 return {
                     'id_producto': producto.id,
                     'nombre': producto.nombre,
+                    'genero': producto.genero,
                     'stock_actual': producto.stock_actual,
                     'costo_entrada': producto.costo_entrada,
                     'proveedor': producto.proveedor,
@@ -125,7 +137,7 @@ class ProductoService:
         finally:
             session.close()
     
-    def actualizar_producto(self, id_producto: str, nombre: str, stock_actual: float,
+    def actualizar_producto(self, id_producto: str, nombre: str, genero: str, stock_actual: float,
                            costo_entrada: float, proveedor: str, fecha_caducidad: str,
                            costo_por_ml: float) -> bool:
         """
@@ -134,6 +146,7 @@ class ProductoService:
         Args:
             id_producto: ID del producto a actualizar
             nombre: Nuevo nombre
+            genero: Nuevo género
             stock_actual: Nuevo stock actual
             costo_entrada: Nuevo costo de entrada
             proveedor: Nuevo proveedor
@@ -151,10 +164,19 @@ class ProductoService:
                 raise ValueError(f"No existe un producto con ID: {id_producto}")
             
             # Convertir fecha string a date object
+            if isinstance(fecha_caducidad, (int, float)):
+                # Si viene como número, convertirlo a string primero
+                fecha_caducidad = str(fecha_caducidad)
+            
+            # Validar formato de fecha
+            if not isinstance(fecha_caducidad, str):
+                raise ValueError(f"Fecha de caducidad debe ser string, recibido: {type(fecha_caducidad)}")
+                
             fecha_obj = datetime.strptime(fecha_caducidad, '%Y-%m-%d').date()
             
             # Actualizar campos
             producto.nombre = nombre
+            producto.genero = genero
             producto.stock_actual = int(stock_actual)
             producto.costo_entrada = float(costo_entrada)
             producto.proveedor = proveedor
@@ -171,9 +193,52 @@ class ProductoService:
         finally:
             session.close()
     
+    def tiene_ventas_asociadas(self, id_producto: str) -> bool:
+        """
+        Verifica si un producto tiene ventas asociadas
+        
+        Args:
+            id_producto: ID del producto a verificar
+            
+        Returns:
+            bool: True si tiene ventas, False en caso contrario
+        """
+        from utils.database import Salida
+        session = get_session()
+        try:
+            count = session.query(Salida).filter(Salida.id_producto == id_producto).count()
+            return count > 0
+        except SQLAlchemyError as e:
+            print(f"Error verificando ventas asociadas: {e}")
+            return False
+        finally:
+            session.close()
+    
+    def obtener_ventas_asociadas(self, id_producto: str) -> int:
+        """
+        Obtiene el número de ventas asociadas a un producto
+        
+        Args:
+            id_producto: ID del producto
+            
+        Returns:
+            int: Número de ventas asociadas
+        """
+        from utils.database import Salida
+        session = get_session()
+        try:
+            count = session.query(Salida).filter(Salida.id_producto == id_producto).count()
+            return count
+        except SQLAlchemyError as e:
+            print(f"Error contando ventas: {e}")
+            return 0
+        finally:
+            session.close()
+
     def eliminar_producto(self, id_producto: str) -> bool:
         """
-        Elimina un producto de la base de datos
+        Elimina un producto del inventario
+        El historial de ventas se mantiene para auditoría
         
         Args:
             id_producto: ID del producto a eliminar
@@ -186,13 +251,19 @@ class ProductoService:
             producto = session.query(Producto).filter(Producto.id == id_producto).first()
             
             if not producto:
-                raise ValueError(f"No existe un producto con ID: {id_producto}")
+                print(f"No existe un producto con ID: {id_producto}")
+                return False
             
+            # Solo eliminar el producto del inventario
+            # El historial de ventas se mantiene independiente
             session.delete(producto)
             session.commit()
+            
+            print(f"Producto {id_producto} eliminado del inventario")
+            print("El historial de ventas se mantiene para auditoría")
             return True
             
-        except (ValueError, SQLAlchemyError) as e:
+        except SQLAlchemyError as e:
             session.rollback()
             print(f"Error al eliminar producto: {e}")
             return False
@@ -222,6 +293,7 @@ class ProductoService:
                 resultado.append({
                     'id_producto': producto.id,
                     'nombre': producto.nombre,
+                    'genero': producto.genero,
                     'stock_actual': producto.stock_actual,
                     'costo_entrada': producto.costo_entrada,
                     'proveedor': producto.proveedor,
@@ -278,7 +350,8 @@ class ProductoService:
                 'costo_entrada': 125.00,
                 'proveedor': 'Aromática Natural',
                 'fecha_caducidad': '2025-12-31',
-                'costo_por_ml': 0.25
+                'costo_por_ml': 0.25,
+                'genero': 'Unisex'
             },
             {
                 'id_producto': 'ESE002',
@@ -287,7 +360,8 @@ class ProductoService:
                 'costo_entrada': 40.00,
                 'proveedor': 'Esencias del Mundo',
                 'fecha_caducidad': '2025-06-15',
-                'costo_por_ml': 0.80
+                'costo_por_ml': 0.80,
+                'genero': 'Femenino'
             },
             {
                 'id_producto': 'ESE003',
@@ -296,7 +370,8 @@ class ProductoService:
                 'costo_entrada': 45.00,
                 'proveedor': 'Aromática Natural',
                 'fecha_caducidad': '2026-03-20',
-                'costo_por_ml': 0.15
+                'costo_por_ml': 0.15,
+                'genero': 'Masculino'
             },
             {
                 'id_producto': 'ESE004',
@@ -305,7 +380,8 @@ class ProductoService:
                 'costo_entrada': 76.00,
                 'proveedor': 'Tropical Scents',
                 'fecha_caducidad': '2025-09-10',
-                'costo_por_ml': 0.95
+                'costo_por_ml': 0.95,
+                'genero': 'Femenino'
             },
             {
                 'id_producto': 'ESE101',
@@ -314,10 +390,60 @@ class ProductoService:
                 'costo_entrada': 2500.00,
                 'proveedor': 'Luisito',
                 'fecha_caducidad': '2025-09-21',
-                'costo_por_ml': 10.00
+                'costo_por_ml': 10.00,
+                'genero': 'Masculino'
             }
         ]
         
         for producto in productos_ejemplo:
             if not self.buscar_por_id(producto['id_producto']):
                 self.agregar_producto(**producto)
+    
+    def obtener_productos_por_genero(self, genero):
+        """Obtiene productos filtrados por género"""
+        session = get_session()
+        try:
+            productos = session.query(Producto).filter(Producto.genero == genero).all()
+            resultado = []
+            
+            for producto in productos:
+                resultado.append({
+                    'id_producto': producto.id,
+                    'nombre': producto.nombre,
+                    'genero': producto.genero,
+                    'stock_actual': producto.stock_actual,
+                    'costo_entrada': producto.costo_entrada,
+                    'proveedor': producto.proveedor,
+                    'fecha_caducidad': producto.fecha_caducidad.strftime('%Y-%m-%d'),
+                    'costo_por_ml': producto.costo_por_ml,
+                    'valor_total': producto.valor_total_stock(),
+                    'stock_bajo': producto.stock_bajo()
+                })
+            
+            return resultado
+        except Exception as e:
+            raise RuntimeError(f"Error al obtener productos por género: {str(e)}")
+        finally:
+            session.close()
+    
+    def obtener_estadisticas_por_genero(self):
+        """Obtiene estadísticas de productos agrupadas por género"""
+        try:
+            with self.get_session() as session:
+                estadisticas = {}
+                generos = ['Masculino', 'Femenino', 'Unisex']
+                
+                for genero in generos:
+                    productos = session.query(Producto).filter(Producto.genero == genero).all()
+                    total_stock = sum(p.stock_actual for p in productos)
+                    valor_total = sum(p.stock_actual * p.costo_por_ml for p in productos)
+                    
+                    estadisticas[genero] = {
+                        'cantidad_productos': len(productos),
+                        'total_stock': total_stock,
+                        'valor_total': valor_total
+                    }
+                
+                return estadisticas
+        except Exception as e:
+            raise RuntimeError(f"Error al obtener estadísticas por género: {str(e)}")
